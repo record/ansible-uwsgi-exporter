@@ -1,0 +1,6 @@
+---
+- name: drop uwsgi exporter temp folder
+  local_action:
+    module: file
+    path: '{{ uwsgiexporter_temp.stdout_lines[0] }}'
+    state: absent

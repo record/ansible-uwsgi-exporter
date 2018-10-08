@@ -1,0 +1,11 @@
+[Unit]
+Description=uWSGI Exporter service
+After=network.target
+
+[Service]
+Type=simple
+ExecStart={{ uwsgiexporter_prefix }}/uwsgi_exporter --stats.uri "{{ uwsgiexporter_stats_uri }}" --stats.timeout {{ uwsgiexporter_stats_timeout }} --log.level {{ uwsgiexporter_log_level }} --web.listen-address "{{ uwsgiexporter_listen_host }}:{{ uwsgiexporter_listen_port }}"
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

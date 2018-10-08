@@ -1,0 +1,11 @@
+---
+galaxy_info:
+  author: Lin, Yi-Li
+  description: uWSGI Exporter
+  license: LGPLv3
+  min_ansible_version: 1.9
+  platforms:
+  - name: Ubuntu
+    versions:
+    - xenial
+dependencies: []

@@ -1,0 +1,8 @@
+---
+uwsgiexporter_version: '0.8.0'
+uwsgiexporter_prefix: '/opt/uwsgi_exporter'
+uwsgiexporter_stats_uri: 'unix:///run/uwsgi/stats.sock'
+uwsgiexporter_stats_timeout: '5s'
+uwsgiexporter_log_level: info
+uwsgiexporter_listen_host: ''
+uwsgiexporter_listen_port: 9117

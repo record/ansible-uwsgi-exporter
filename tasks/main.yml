@@ -1,0 +1,49 @@
+---
+- name: uWSGI Exporter | Create Temp Folder
+  local_action: shell mktemp --directory
+  register: uwsgiexporter_temp
+  notify: drop uwsgi exporter temp folder
+
+- name: uWSGI Exporter | Download Release
+  local_action:
+    module: get_url
+    url: 'https://github.com/timonwong/uwsgi_exporter/releases/download/v{{ uwsgiexporter_version }}/uwsgi_exporter-{{ uwsgiexporter_version }}.linux-amd64.tar.gz'
+    dest: '{{ uwsgiexporter_temp.stdout_lines[0] }}/uwsgi_exporter.linux-amd64.tar.gz'
+
+- name: uWSGI Exporter | Extract
+  local_action:
+    module: unarchive
+    src: '{{ uwsgiexporter_temp.stdout_lines[0] }}/uwsgi_exporter.linux-amd64.tar.gz'
+    dest: '{{ uwsgiexporter_temp.stdout_lines[0] }}'
+
+- name: uWSGI Exporter | Stop Service
+  command: systemctl stop uwsgi-exporter.service
+  become: yes
+  ignore_errors: yes
+
+- name: uWSGI Exporter | Create Folder
+  file:
+    path: '{{ uwsgiexporter_prefix }}'
+    state: directory
+    mode: 0700
+  become: yes
+
+- name: uWSGI Exporter | Put Executable
+  copy:
+    src: '{{ uwsgiexporter_temp.stdout_lines[0] }}/uwsgi_exporter-{{ uwsgiexporter_version }}.linux-amd64/uwsgi_exporter'
+    dest: '{{ uwsgiexporter_prefix }}/'
+    mode: 0755
+  become: yes
+
+- name: uWSGI Exporter | Put Unit File
+  template:
+    src: uwsgi-exporter.service.j2
+    dest: /etc/systemd/system/uwsgi-exporter.service
+  become: yes
+
+- name: uWSGI Exporter | Update Systemd & Restart Service
+  shell: >-
+    systemctl daemon-reload &&
+    systemctl enable uwsgi-exporter.service &&
+    systemctl restart uwsgi-exporter.service
+  become: yes
